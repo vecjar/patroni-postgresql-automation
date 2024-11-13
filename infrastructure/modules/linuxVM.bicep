@@ -16,35 +16,19 @@ param vnetName string = '${vmName}-vnet'
 @description('Provide the name of the Subnet within the VNet')
 param subnetName string = '${vmName}-subnet'
 
-// Provision the Virtual Network (VNet)
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+// Reference the existing Virtual Network (if it exists)
+resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: vnetName
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        addressSpace
-      ]
-    }
-    subnets: [
-      {
-        name: subnetName
-        properties: {
-          addressPrefix: subnetPrefix
-        }
-      }
-    ]
-  }
 }
 
-// Reference the subnet within the newly created VNet
+// Reference the existing Subnet (if it exists)
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   name: subnetName
   parent: vnet
 }
 
-// Network Interface for the VM
-resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
+// NIC Resource
+resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = if (true) {
   name: '${vmName}-nic'
   location: location
   properties: {
@@ -62,8 +46,8 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   }
 }
 
-// Virtual Machine
-resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
+// Virtual Machine Creation
+resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = if (true) {
   name: vmName
   location: location
   properties: {
