@@ -1,45 +1,74 @@
-@description('Get the resource group location and tenant id')
-param location string = resourceGroup().location
+@description('The names of your Virtual Machines.')
+param vmNames array = [
+  'simpleLinuxVM1'
+  'simpleLinuxVM2'
+  'simpleLinuxVM3'
+]
 
-// a 4 character suffix to add to the various names of Azure resources to help them be unique
-var appSuffix = substring(uniqueString(resourceGroup().id), 0, 4)
-
-@description('Administrator username for the VM')
+@description('Username for the Virtual Machines.')
 param adminUsername string
 
-@description('Administrator password for the VM')
+@description('Type of authentication to use on the Virtual Machines. SSH key is recommended.')
+@allowed([
+  'sshPublicKey'
+  'password'
+])
+param authenticationType string = 'password'
+
+@description('SSH Key or password for the Virtual Machines. SSH key is recommended.')
 @secure()
-param adminPassword string
+param adminPasswordOrKey string
 
-@description('Name of the Virtual Network')
-param vnetName string
+@description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
+@allowed([
+  'Ubuntu-2004'
+  'Ubuntu-2204'
+])
+param ubuntuOSVersion string = 'Ubuntu-2004'
 
-@description('Subnet name within the Virtual Network')
-param subnetName string
+@description('Location for all resources.')
+param location string = resourceGroup().location
 
-@description('Virtual Machine name')
-param vmName string
+@description('The size of the VMs')
+param vmSize string = 'Standard_D2s_v3'
 
-// Reference the existing Virtual Network (if it exists)
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
-  name: vnetName
-}
+@description('Security Type of the Virtual Machines.')
+@allowed([
+  'Standard'
+  'TrustedLaunch'
+])
+param securityType string = 'TrustedLaunch'
 
-// Reference the existing Subnet (if it exists)
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-  name: subnetName
-  parent: vnet
-}
-
-// Module for creating a Linux VM
-module linuxVM './modules/linuxVM.bicep' = {
-  name: 'linuxVMDeployment'
+// Module for Virtual Network
+module vnetModule './modules/virtualNetwork.bicep' = {
+  name: 'vnetDeployment'
   params: {
     location: location
-    vmName: vmName
+  }
+}
+
+// Module for Network Security Group
+module nsgModule './modules/networkSecurityGroup.bicep' = {
+  name: 'nsgDeployment'
+  params: {
+    location: location
+  }
+}
+
+// Module for Virtual Machines
+module vmModule './modules/virtualMachines.bicep' = {
+  name: 'vmDeployment'
+  params: {
+    vmNames: vmNames
     adminUsername: adminUsername
-    adminPassword: adminPassword
-    // vnet: vnet  // Pass the existing VNet resource
-    // subnet: subnet  // Pass the existing Subnet resource
+    authenticationType: authenticationType
+    adminPasswordOrKey: adminPasswordOrKey
+    ubuntuOSVersion: ubuntuOSVersion
+    location: location
+    vmSize: vmSize
+    securityType: securityType
+    vnetId: vnetModule.outputs.vnetId
+    subnetId: vnetModule.outputs.subnetId
+    nsgId: nsgModule.outputs.nsgId
   }
 }
