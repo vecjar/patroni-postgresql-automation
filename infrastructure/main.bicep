@@ -39,6 +39,23 @@ param vmSize string = 'Standard_D2s_v3'
 ])
 param securityType string = 'TrustedLaunch'
 
+// Flag to use existing VMs or create new ones
+@description('Flag to use existing VMs or create new ones.')
+param useExistingVMs bool = true  // Set this to 'false' to create new VMs
+
+// Reference existing VMs if useExistingVMs is true
+resource existingVM1 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
+  name: vmNames[0]
+}
+
+resource existingVM2 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
+  name: vmNames[1]
+}
+
+resource existingVM3 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
+  name: vmNames[2]
+}
+
 // Module for Virtual Network
 module vnetModule './modules/virtualNetwork.bicep' = {
   name: 'vnetDeployment'
@@ -55,8 +72,8 @@ module nsgModule './modules/networkSecurityGroup.bicep' = {
   }
 }
 
-// Module for Virtual Machines
-module vmModule './modules/virtualMachines.bicep' = {
+// Conditionally create VMs if they do not exist
+module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
   name: 'vmDeployment'
   params: {
     vmNames: vmNames
