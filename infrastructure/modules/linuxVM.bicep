@@ -62,7 +62,8 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = if (createVNet) 
           subnet: {
             id: subnetCreate.id  // Reference the subnet created above
           }
-          privateIPAllocationMethod: 'Dynamic'
+          privateIPAllocationMethod: 'Static'  // Change to Static
+          privateIPAddress: '10.0.1.4'  // Specify the static IP address you want
         }
       }
     ]
