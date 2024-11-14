@@ -17,7 +17,7 @@ param vnetName string = 'myVNet'  // Replace with actual VNet name if it exists
 param subnetName string = 'mySubnet'  // Replace with actual Subnet name if it exists
 
 // Flag to indicate if new VNet and Subnet should be created
-param createVNet bool = true  // Set to 'false' if VNet/Subnet already exists
+param createVNet bool = true  // Set to 'false' to reuse existing VNet/Subnet
 
 // Reference the existing Virtual Network (if it exists)
 resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = if (!createVNet) {
@@ -50,8 +50,8 @@ resource subnetCreate 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = i
   }
 }
 
-// NIC Resource (Updated to use subnetCreate.id or subnet.id)
-resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
+// NIC Resource (will use existing NIC if it exists, or create a new one if not)
+resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = if (createVNet) {
   name: '${vmName}-nic'
   location: location
   properties: {
@@ -60,17 +60,23 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
         name: 'ipConfig1'
         properties: {
           subnet: {
-            id: createVNet ? subnetCreate.id : subnet.id  // Choose correct subnet reference based on VNet creation flag
+            id: subnetCreate.id  // Reference the subnet created above
           }
           privateIPAllocationMethod: 'Dynamic'
         }
       }
     ]
+    enableIPForwarding: true  // Enable IP forwarding at the NIC level
   }
 }
 
-// Virtual Machine Creation
-resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
+// Reference existing NIC if createVNet is false
+resource existingNic 'Microsoft.Network/networkInterfaces@2021-02-01' existing = if (!createVNet) {
+  name: '${vmName}-nic'  // Assuming NIC is named according to VM name
+}
+
+// Virtual Machine Creation (will use existing VM if it exists, or create a new one if not)
+resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = if (createVNet) {
   name: vmName
   location: location
   properties: {
@@ -100,9 +106,14 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nic.id
+          id: nic.id  // Reference the NIC created above
         }
       ]
     }
   }
+}
+
+// Reference existing VM if createVNet is false
+resource existingVM 'Microsoft.Compute/virtualMachines@2021-07-01' existing = if (!createVNet) {
+  name: vmName
 }
