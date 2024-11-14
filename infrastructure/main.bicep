@@ -39,7 +39,7 @@ module linuxVM './modules/linuxVM.bicep' = {
     vmName: vmName
     adminUsername: adminUsername
     adminPassword: adminPassword
-    vnetName: vnetName
-    subnetName: subnetName
+    // vnet: vnet  // Pass the existing VNet resource
+    // subnet: subnet  // Pass the existing Subnet resource
   }
 }
