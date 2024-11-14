@@ -1,47 +1,42 @@
 @description('The names of your Virtual Machines.')
-param vmNames array = [
-  'simpleLinuxVM1'
-  'simpleLinuxVM2'
-  'simpleLinuxVM3'
-]
+param vmNames array
 
 @description('Username for the Virtual Machines.')
-param adminUsername string = 'azureadmin'
+param adminUsername string
 
 @description('Type of authentication to use on the Virtual Machines. SSH key is recommended.')
 @allowed([
   'sshPublicKey'
   'password'
 ])
-param authenticationType string = 'password'
+param authenticationType string
 
 @description('SSH Key or password for the Virtual Machines. SSH key is recommended.')
 @secure()
-param adminPasswordOrKey string = '185duXr$5'
+param adminPasswordOrKey string
 
 @description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
 @allowed([
   'Ubuntu-2004'
   'Ubuntu-2204'
 ])
-param ubuntuOSVersion string = 'Ubuntu-2004'
+param ubuntuOSVersion string
 
 @description('Location for all resources.')
-param location string = resourceGroup().location
+param location string
 
-@description('The size of the VMs')
-param vmSize string = 'Standard_D2s_v3'
+@description('The size of the VMs.')
+param vmSize string
 
 @description('Security Type of the Virtual Machines.')
 @allowed([
   'Standard'
   'TrustedLaunch'
 ])
-param securityType string = 'TrustedLaunch'
+param securityType string
 
-// Flag to use existing VMs or create new ones
 @description('Flag to use existing VMs or create new ones.')
-param useExistingVMs bool = false  // Set this to 'false' to create new VMs
+param useExistingVMs bool
 
 // Reference existing VMs if useExistingVMs is true
 resource existingVM1 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {

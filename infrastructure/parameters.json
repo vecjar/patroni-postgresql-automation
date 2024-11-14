@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmNames": {
+        "value": [
+          "simpleLinuxVM1",
+          "simpleLinuxVM2",
+          "simpleLinuxVM3"
+        ]
+      },
+      "adminUsername": {
+        "value": "azureadmin"
+      },
+      "authenticationType": {
+        "value": "password"
+      },
+      "adminPasswordOrKey": {
+        "value": "185duXr$5"
+      },
+      "ubuntuOSVersion": {
+        "value": "Ubuntu-2004"
+      },
+      "location": {
+        "value": "australiaeast"
+      },
+      "vmSize": {
+        "value": "Standard_D2s_v3"
+      },
+      "securityType": {
+        "value": "TrustedLaunch"
+      },
+      "useExistingVMs": {
+        "value": false
+      }
+    }
+  }
+  
