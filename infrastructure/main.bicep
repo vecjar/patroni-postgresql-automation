@@ -41,7 +41,7 @@ param securityType string = 'TrustedLaunch'
 
 // Flag to use existing VMs or create new ones
 @description('Flag to use existing VMs or create new ones.')
-param useExistingVMs bool = true  // Set this to 'false' to create new VMs
+param useExistingVMs bool = false  // Set this to 'false' to create new VMs
 
 // Reference existing VMs if useExistingVMs is true
 resource existingVM1 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
