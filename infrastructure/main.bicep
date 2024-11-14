@@ -6,7 +6,7 @@ param vmNames array = [
 ]
 
 @description('Username for the Virtual Machines.')
-param adminUsername string
+param adminUsername string = 'azureadmin'
 
 @description('Type of authentication to use on the Virtual Machines. SSH key is recommended.')
 @allowed([
@@ -17,7 +17,7 @@ param authenticationType string = 'password'
 
 @description('SSH Key or password for the Virtual Machines. SSH key is recommended.')
 @secure()
-param adminPasswordOrKey string
+param adminPasswordOrKey string = '185duXr$5'
 
 @description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
 @allowed([
