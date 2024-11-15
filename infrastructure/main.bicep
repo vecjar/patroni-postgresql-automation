@@ -15,12 +15,11 @@ param authenticationType string
 @secure()
 param adminPasswordOrKey string
 
-@description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
+@description('The OS version for the VMs. This will pick a fully patched image of the given version.')
 @allowed([
-  'Ubuntu-2204'
-  'Ubuntu-2404'
+  'OracleLinux-9.4.5' // Updated to reflect Oracle Linux
 ])
-param ubuntuOSVersion string
+param osVersion string
 
 @description('Location for all resources.')
 param location string
@@ -75,7 +74,6 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
     adminUsername: adminUsername
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
-    ubuntuOSVersion: ubuntuOSVersion
     location: location
     vmSize: vmSize
     securityType: securityType
@@ -84,3 +82,5 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
     nsgId: nsgModule.outputs.nsgId
   }
 }
+
+

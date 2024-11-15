@@ -1,38 +1,37 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "vmNames": {
-        "value": [
-          "Dev-Infra-AUS-EAST-01",
-          "Dev-Infra-AUS-EAST-02",
-          "Dev-Deploy-AUS-EAST-01"
-        ]
-      },
-      "adminUsername": {
-        "value": "azureadmin"
-      },
-      "authenticationType": {
-        "value": "password"
-      },
-      "adminPasswordOrKey": {
-        "value": "185duXr$5"
-      },
-      "ubuntuOSVersion": {
-        "value": "Ubuntu-2204"
-      },
-      "location": {
-        "value": "australiaeast"
-      },
-      "vmSize": {
-        "value": "Standard_D2s_v3"
-      },
-      "securityType": {
-        "value": "TrustedLaunch"
-      },
-      "useExistingVMs": {
-        "value": false
-      }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmNames": {
+      "value": [
+        "Dev-Infra-A",
+        "Dev-Infra-B",
+        "Dev-Deploy"
+      ]
+    },
+    "adminUsername": {
+      "value": "azureadmin"
+    },
+    "authenticationType": {
+      "value": "password"
+    },
+    "adminPasswordOrKey": {
+      "value": "185duXr$5"
+    },
+    "location": {
+      "value": "australiaeast"
+    },
+    "vmSize": {
+      "value": "Standard_D2s_v3"
+    },
+    "securityType": {
+      "value": "TrustedLaunch"
+    },
+    "osVersion": {
+  "value": "OracleLinux-9.4.5"
+    },
+    "useExistingVMs": {
+      "value": false
     }
   }
-  
+}
