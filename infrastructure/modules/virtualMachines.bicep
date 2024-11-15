@@ -109,7 +109,7 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
   properties: {
     ipConfigurations: [
       {
-        name: 'Dev-VM-Infra-AUS-EAST-NIC'
+        name: '${vmName}-NICConfig'
         properties: {
           subnet: {
             id: subnetId
@@ -124,8 +124,10 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
     networkSecurityGroup: {
       id: nsgId
     }
+    enableIPForwarding: true // Enable IP forwarding here
   }
 }]
+
 
 @batchSize(1)
 resource publicIPAddresses 'Microsoft.Network/publicIPAddresses@2023-09-01' = [for (vmName, i) in vmNames: {
