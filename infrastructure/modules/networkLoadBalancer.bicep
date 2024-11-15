@@ -37,7 +37,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
   name: loadBalancerName
   location: location
   sku: {
-    name: 'Standard' // Ensure consistency with Public IP SKU
+    name: 'Standard'
   }
   properties: {
     frontendIPConfigurations: [
@@ -56,7 +56,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         properties: {
           backendIPConfigurations: [
             for nicId in networkInterfaceIds: {
-              id: '${nicId}/ipConfigurations/ipconfig1' // Replace "ipconfig1" with your IP configuration name
+              id: '${nicId}/ipConfigurations/ipconfig1' // Ensure IP configuration name is correct
             }
           ]
         }
@@ -75,7 +75,6 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
     ]
   }
 }
-
 
 // Output frontend IP configuration, backend pool, and health probe IDs
 output frontendIpId string = loadBalancer.properties.frontendIPConfigurations[0].id

@@ -70,6 +70,10 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
     subnetId: vnetModule.outputs.subnetId
     nsgId: nsgModule.outputs.nsgId
   }
+  dependsOn: [
+    vnetModule
+    nsgModule
+  ]
 }
 
 module nlbModule './modules/networkLoadBalancer.bicep' = {
@@ -83,7 +87,12 @@ module nlbModule './modules/networkLoadBalancer.bicep' = {
     loadBalancerName: 'myLoadBalancer'
     networkInterfaceIds: vmModule.outputs.networkInterfaceIds
   }
+  dependsOn: [
+    vmModule
+  ]
 }
 
-
-
+// Output the virtual network and subnet IDs for verification
+output vnetId string = vnetModule.outputs.vnetId
+output subnetId string = vnetModule.outputs.subnetId
+output networkInterfaceIds array = vmModule.outputs.networkInterfaceIds

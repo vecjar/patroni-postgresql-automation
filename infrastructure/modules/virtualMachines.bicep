@@ -62,6 +62,30 @@ var securityProfileJson = {
   securityType: securityType
 }
 
+// Loop to create Network Interfaces and Public IP addresses
+@batchSize(1)
+resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [for (vmName, i) in vmNames: {
+  name: '${vmName}-nic' // Ensure the name matches here
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: '${vmName}-NICConfig'
+        properties: {
+          subnet: {
+            id: subnetId
+          }
+          privateIPAllocationMethod: 'Dynamic'
+        }
+      }
+    ]
+    networkSecurityGroup: {
+      id: nsgId
+    }
+    enableIPForwarding: true
+  }
+}]
+
 // Loop to create VMs
 @batchSize(1)
 resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) in vmNames: {
@@ -83,7 +107,7 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) i
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaces[i].id
+          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic') // Ensure ID matches
         }
       ]
     }
@@ -97,32 +121,7 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) i
   }
 }]
 
-// Loop to create Network Interfaces and Public IP addresses
-@batchSize(1)
-resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [for (vmName, i) in vmNames: {
-  name: '${vmName}NetInt'
-  location: location
-  properties: {
-    ipConfigurations: [
-      {
-        name: '${vmName}-NICConfig'
-        properties: {
-          subnet: {
-            id: subnetId
-          }
-          privateIPAllocationMethod: 'Dynamic'
-        }
-      }
-    ]
-    networkSecurityGroup: {
-      id: nsgId
-    }
-    enableIPForwarding: true // Enable IP forwarding here
-  }
-}]
-
 // Output the network interface IDs after creation
 output networkInterfaceIds array = [
-  for vm in vmNames: resourceId('Microsoft.Network/networkInterfaces', '${vm}-nic')
+  for vmName in vmNames: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic')
 ]
-
