@@ -72,4 +72,18 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
   }
 }
 
+module nlbModule './modules/networkLoadBalancer.bicep' = {
+  name: 'nlbDeployment'
+  params: {
+    location: location
+    publicIpName: 'myPublicIP'
+    subnetId: vnetModule.outputs.subnetId
+    backendPoolName: 'myBackendPool'
+    healthProbeName: 'myHealthProbe'
+    loadBalancerName: 'myLoadBalancer'
+    networkInterfaceIds: vmModule.outputs.networkInterfaceIds
+  }
+}
+
+
 

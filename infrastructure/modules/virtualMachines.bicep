@@ -111,9 +111,6 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
             id: subnetId
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIPAddresses[i].id
-          }
         }
       }
     ]
@@ -124,20 +121,8 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
   }
 }]
 
-// Loop to create Public IP addresses
-@batchSize(1)
-resource publicIPAddresses 'Microsoft.Network/publicIPAddresses@2023-09-01' = [for (vmName, i) in vmNames: {
-  name: '${vmName}PublicIP'
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Dynamic'
-    publicIPAddressVersion: 'IPv4'
-    dnsSettings: {
-      domainNameLabel: toLower('${vmName}-${uniqueString(resourceGroup().id)}')
-    }
-    idleTimeoutInMinutes: 4
-  }
-}]
+// Output the network interface IDs after creation
+output networkInterfaceIds array = [
+  for vm in vmNames: resourceId('Microsoft.Network/networkInterfaces', '${vm}-nic')
+]
+
