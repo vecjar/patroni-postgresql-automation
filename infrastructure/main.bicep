@@ -17,8 +17,8 @@ param adminPasswordOrKey string
 
 @description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
 @allowed([
-  'Ubuntu-2004'
   'Ubuntu-2204'
+  'Ubuntu-2404'
 ])
 param ubuntuOSVersion string
 

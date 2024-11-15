@@ -12,7 +12,7 @@ param authenticationType string
 param adminPasswordOrKey string
 
 @description('Ubuntu version for the VMs')
-param ubuntuOSVersion string
+param ubuntuOSVersion string = '22_04-lts'  // Default to 22.04, or set '24_04-lts' for 24.04
 
 @description('Location for the VMs')
 param location string
@@ -32,21 +32,26 @@ param subnetId string
 @description('Network Security Group ID')
 param nsgId string
 
+// Image reference for Ubuntu versions
 var imageReference = {
-  'Ubuntu-2004': {
-    publisher: 'Canonical'
-    offer: '0001-com-ubuntu-server-focal'
-    sku: '20_04-lts-gen2'
-    version: 'latest'
-  }
   'Ubuntu-2204': {
     publisher: 'Canonical'
     offer: '0001-com-ubuntu-server-jammy'
     sku: '22_04-lts-gen2'
     version: 'latest'
   }
+  'Ubuntu-2404': {
+    publisher: 'Canonical'
+    offer: '0001-com-ubuntu-server-lunar'
+    sku: '24_04-lts-gen2'
+    version: 'latest'
+  }
 }
+
+// OS Disk type and settings
 var osDiskType = 'Standard_LRS'
+
+// Linux configuration for SSH authentication
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -58,6 +63,8 @@ var linuxConfiguration = {
     ]
   }
 }
+
+// Security profile for the VM
 var securityProfileJson = {
   uefiSettings: {
     secureBootEnabled: true
@@ -128,7 +135,7 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
   }
 }]
 
-
+// Loop to create Public IP addresses
 @batchSize(1)
 resource publicIPAddresses 'Microsoft.Network/publicIPAddresses@2023-09-01' = [for (vmName, i) in vmNames: {
   name: '${vmName}PublicIP'
