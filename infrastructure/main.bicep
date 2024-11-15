@@ -4,23 +4,11 @@ param vmNames array
 @description('Username for the Virtual Machines.')
 param adminUsername string
 
-@description('Type of authentication to use on the Virtual Machines. SSH key is recommended.')
-@allowed([
-  'sshPublicKey'
-  'password'
-])
 param authenticationType string
 
 @description('SSH Key or password for the Virtual Machines. SSH key is recommended.')
 @secure()
 param adminPasswordOrKey string
-
-@description('The Ubuntu version for the VMs. This will pick a fully patched image of this given Ubuntu version.')
-@allowed([
-  'Ubuntu-2204'
-  'Ubuntu-2404'
-])
-param ubuntuOSVersion string
 
 @description('Location for all resources.')
 param location string
@@ -75,7 +63,6 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
     adminUsername: adminUsername
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
-    ubuntuOSVersion: ubuntuOSVersion
     location: location
     vmSize: vmSize
     securityType: securityType
@@ -84,3 +71,5 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
     nsgId: nsgModule.outputs.nsgId
   }
 }
+
+

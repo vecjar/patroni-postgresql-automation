@@ -11,9 +11,6 @@ param authenticationType string
 @secure()
 param adminPasswordOrKey string
 
-@description('Ubuntu version for the VMs')
-param ubuntuOSVersion string = '22_04-lts'  // Default to 22.04, or set '24_04-lts' for 24.04
-
 @description('Location for the VMs')
 param location string
 
@@ -32,20 +29,12 @@ param subnetId string
 @description('Network Security Group ID')
 param nsgId string
 
-// Image reference for Ubuntu versions
+// Image reference for Oracle Linux 9
 var imageReference = {
-  'Ubuntu-2204': {
-    publisher: 'Canonical'
-    offer: '0001-com-ubuntu-server-jammy'
-    sku: '22_04-lts-gen2'
-    version: 'latest'
-  }
-  'Ubuntu-2404': {
-    publisher: 'Canonical'
-    offer: '0001-com-ubuntu-server-lunar'
-    sku: '24_04-lts-gen2'
-    version: 'latest'
-  }
+  publisher: 'Oracle'
+  offer: 'Oracle-Linux'
+  sku: 'ol94-lvm-gen2'
+  version: '9.4.5'
 }
 
 // OS Disk type and settings
@@ -89,7 +78,7 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) i
           storageAccountType: osDiskType
         }
       }
-      imageReference: imageReference[ubuntuOSVersion]
+      imageReference: imageReference
     }
     networkProfile: {
       networkInterfaces: [
