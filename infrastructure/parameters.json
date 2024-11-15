@@ -4,9 +4,9 @@
   "parameters": {
     "vmNames": {
       "value": [
-        "Dev-Infra-A",
-        "Dev-Infra-B",
-        "Dev-Deploy"
+        "Dev-Infra-A-AUS-01",
+        "Dev-Infra-B-AUS-01",
+        "Dev-Deploy-AUS-01"
       ]
     },
     "adminUsername": {
@@ -26,9 +26,6 @@
     },
     "securityType": {
       "value": "TrustedLaunch"
-    },
-    "osVersion": {
-  "value": "OracleLinux-9.4.5"
     },
     "useExistingVMs": {
       "value": false
