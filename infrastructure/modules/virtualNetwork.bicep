@@ -6,7 +6,7 @@ var subnetAddressPrefix = '10.1.0.0/24'
 
 // Virtual Network resource
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
-  name: 'vNet'
+  name: 'Dev-AUS-EAST-App-VNet'
   location: location
   properties: {
     addressSpace: {
@@ -16,7 +16,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
     }
     subnets: [
       {
-        name: 'Subnet'
+        name: 'Dev-AUS-EAST-DB-Subnet'
         properties: {
           addressPrefix: subnetAddressPrefix
           privateEndpointNetworkPolicies: 'Enabled'

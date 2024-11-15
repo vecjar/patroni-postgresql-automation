@@ -109,7 +109,7 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
   properties: {
     ipConfigurations: [
       {
-        name: 'ipconfig1'
+        name: 'Dev-VM-Infra-AUS-EAST-NIC'
         properties: {
           subnet: {
             id: subnetId

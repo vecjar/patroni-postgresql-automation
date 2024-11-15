@@ -4,9 +4,9 @@
     "parameters": {
       "vmNames": {
         "value": [
-          "simpleLinuxVM1",
-          "simpleLinuxVM2",
-          "simpleLinuxVM3"
+          "Dev-Infra-AUS-EAST-01",
+          "Dev-Infra-AUS-EAST-02",
+          "Dev-Deploy-AUS-EAST-01"
         ]
       },
       "adminUsername": {
