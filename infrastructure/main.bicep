@@ -4,22 +4,11 @@ param vmNames array
 @description('Username for the Virtual Machines.')
 param adminUsername string
 
-// @description('Type of authentication to use on the Virtual Machines. SSH key is recommended.')
-// @allowed([
-//   'sshPublicKey'
-//   'password'
-// ])
 param authenticationType string
 
 @description('SSH Key or password for the Virtual Machines. SSH key is recommended.')
 @secure()
 param adminPasswordOrKey string
-
-// @description('The OS version for the VMs. This will pick a fully patched image of the given version.')
-// @allowed([
-//   'OracleLinux-9.4.5' // Updated to reflect Oracle Linux
-// ])
-// param osVersion string
 
 @description('Location for all resources.')
 param location string
