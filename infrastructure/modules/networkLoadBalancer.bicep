@@ -45,7 +45,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         name: 'FrontendConfiguration'
         properties: {
           publicIPAddress: {
-            id: resourceId('Microsoft.Network/publicIPAddresses', publicIpName)
+            id: publicIp.id // Direct reference to the public IP resource
           }
         }
       }
@@ -75,6 +75,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
     ]
   }
 }
+
 
 // Output frontend IP configuration, backend pool, and health probe IDs
 output frontendIpId string = loadBalancer.properties.frontendIPConfigurations[0].id
