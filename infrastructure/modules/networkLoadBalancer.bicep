@@ -42,8 +42,14 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         name: backendPoolName
         properties: {
           backendIPConfigurations: [
-            for nicId in networkInterfaceIds: {
-              id: '${nicId}/ipConfigurations/ipconfig1' // Ensure IP configuration name matches
+            {
+              id: '${networkInterfaceIds[0]}/ipConfigurations/Dev-Control-Node-NICConfig'
+            }
+            {
+              id: '${networkInterfaceIds[1]}/ipConfigurations/Dev-Infrastructure-Node-A-NICConfig'
+            }
+            {
+              id: '${networkInterfaceIds[2]}/ipConfigurations/Dev-Infrastructure-Node-B-NICConfig'
             }
           ]
         }
