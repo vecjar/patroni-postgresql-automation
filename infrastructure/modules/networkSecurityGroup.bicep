@@ -1,26 +1,27 @@
 @description('Location for the Network Security Group')
 param location string
 
-resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
-  name: 'Dev-AUS-EAST-App-NSG'
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
+  name: 'myNSG'
   location: location
   properties: {
     securityRules: [
       {
-        name: 'SSH'
+        name: 'AllowSSH'
         properties: {
-          priority: 1000
+          description: 'Allow SSH'
           protocol: 'Tcp'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourceAddressPrefix: '*'
           sourcePortRange: '*'
-          destinationAddressPrefix: '*'
           destinationPortRange: '22'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Inbound'
         }
       }
     ]
   }
 }
 
-output nsgId string = networkSecurityGroup.id
+output nsgId string = nsg.id
