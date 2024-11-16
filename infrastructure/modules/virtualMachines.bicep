@@ -62,9 +62,33 @@ var securityProfileJson = {
   securityType: securityType
 }
 
-// Loop to create VMs (assuming VMs and NICs are already created)
+// Loop to create Network Interfaces and Public IP addresses
 @batchSize(1)
-resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' existing = [for (vmName, i) in vmNames: {
+resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [for (vmName, i) in vmNames: {
+  name: '${vmName}-nic' // Ensure the name matches here
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: '${vmName}-NICConfig'
+        properties: {
+          subnet: {
+            id: subnetId
+          }
+          privateIPAllocationMethod: 'Dynamic'
+        }
+      }
+    ]
+    networkSecurityGroup: {
+      id: nsgId
+    }
+    enableIPForwarding: true
+  }
+}]
+
+// Loop to create VMs
+@batchSize(1)
+resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) in vmNames: {
   name: vmName
   location: location
   properties: {
@@ -83,7 +107,7 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' existing = [for (vmN
     networkProfile: {
       networkInterfaces: [
         {
-          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic')
+          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic') // Ensure ID matches
         }
       ]
     }
