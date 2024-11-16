@@ -19,19 +19,6 @@ param loadBalancerName string
 @description('Array of Network Interface IDs')
 param networkInterfaceIds array
 
-// Public IP Address resource
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
-  name: publicIpName
-  location: location
-  sku: {
-    name: 'Standard'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Static'
-    idleTimeoutInMinutes: 4
-  }
-}
-
 // Load Balancer resource
 resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
   name: loadBalancerName
@@ -45,7 +32,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         name: 'FrontendConfiguration'
         properties: {
           publicIPAddress: {
-            id: publicIp.id // Direct reference to the public IP resource
+            id: resourceId('Microsoft.Network/publicIPAddresses', publicIpName) // Direct reference to the public IP resource
           }
         }
       }
@@ -56,7 +43,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         properties: {
           backendIPConfigurations: [
             for nicId in networkInterfaceIds: {
-              id: '${nicId}/ipConfigurations/ipconfig1' // Ensure IP configuration name is correct
+              id: '${nicId}/ipConfigurations/ipconfig1' // Ensure IP configuration name matches
             }
           ]
         }
@@ -75,7 +62,6 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
     ]
   }
 }
-
 
 // Output frontend IP configuration, backend pool, and health probe IDs
 output frontendIpId string = loadBalancer.properties.frontendIPConfigurations[0].id

@@ -76,11 +76,25 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
   ]
 }
 
+// Ensure public IP is created before load balancer
+resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
+  name: 'myPublicIP'
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    idleTimeoutInMinutes: 4
+  }
+}
+
+// Module for Network Load Balancer
 module nlbModule './modules/networkLoadBalancer.bicep' = {
   name: 'nlbDeployment'
   params: {
     location: location
-    publicIpName: 'myPublicIP'
+    publicIpName: publicIp.name
     subnetId: vnetModule.outputs.subnetId
     backendPoolName: 'myBackendPool'
     healthProbeName: 'myHealthProbe'
@@ -89,10 +103,11 @@ module nlbModule './modules/networkLoadBalancer.bicep' = {
   }
   dependsOn: [
     vmModule
+    publicIp
   ]
 }
 
-// Output the virtual network and subnet IDs for verification
+// Output the virtual network, subnet IDs, and network interface IDs for verification
 output vnetId string = vnetModule.outputs.vnetId
 output subnetId string = vnetModule.outputs.subnetId
 output networkInterfaceIds array = vmModule.outputs.networkInterfaceIds
