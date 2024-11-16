@@ -29,6 +29,18 @@
     },
     "useExistingVMs": {
       "value": false
+    },
+    "publicIpName": {
+      "value": "myPublicIP"
+    },
+    "backendPoolName": {
+      "value": "myBackendPool"
+    },
+    "healthProbeName": {
+      "value": "myHealthProbe"
+    },
+    "loadBalancerName": {
+      "value": "myLoadBalancer"
     }
   }
 }

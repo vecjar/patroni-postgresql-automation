@@ -26,6 +26,18 @@ param securityType string
 @description('Flag to use existing VMs or create new ones.')
 param useExistingVMs bool
 
+@description('Name for the public IP')
+param publicIpName string
+
+@description('Name for the backend pool')
+param backendPoolName string
+
+@description('Name for the health probe')
+param healthProbeName string
+
+@description('Name for the load balancer')
+param loadBalancerName string
+
 // Reference existing VMs if useExistingVMs is true
 resource existingVM1 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
   name: vmNames[0]
@@ -78,7 +90,7 @@ module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
 
 // Ensure public IP is created before load balancer
 resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
-  name: 'myPublicIP'
+  name: publicIpName
   location: location
   sku: {
     name: 'Standard'
@@ -94,11 +106,11 @@ module nlbModule './modules/networkLoadBalancer.bicep' = {
   name: 'nlbDeployment'
   params: {
     location: location
-    publicIpName: publicIp.name
+    publicIpName: publicIpName
     subnetId: vnetModule.outputs.subnetId
-    backendPoolName: 'myBackendPool'
-    healthProbeName: 'myHealthProbe'
-    loadBalancerName: 'myLoadBalancer'
+    backendPoolName: backendPoolName
+    healthProbeName: healthProbeName
+    loadBalancerName: loadBalancerName
     networkInterfaceIds: vmModule.outputs.networkInterfaceIds
   }
   dependsOn: [
