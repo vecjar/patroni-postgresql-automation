@@ -7,17 +7,31 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
   properties: {
     securityRules: [
       {
-        name: 'AllowSSH'
+        name: 'AllowAllInbound'
         properties: {
-          description: 'Allow SSH'
-          protocol: 'Tcp'
+          description: 'Allow all inbound traffic'
+          protocol: '*'
           sourcePortRange: '*'
-          destinationPortRange: '22'
+          destinationPortRange: '*'
           sourceAddressPrefix: '*'
           destinationAddressPrefix: '*'
           access: 'Allow'
           priority: 100
           direction: 'Inbound'
+        }
+      }
+      {
+        name: 'AllowAllOutbound'
+        properties: {
+          description: 'Allow all outbound traffic'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Outbound'
         }
       }
     ]
