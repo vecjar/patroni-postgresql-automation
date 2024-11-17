@@ -32,7 +32,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         name: 'FrontendConfiguration'
         properties: {
           publicIPAddress: {
-            id: resourceId('Microsoft.Network/publicIPAddresses', publicIpName) // Direct reference to the public IP resource
+            id: resourceId('Microsoft.Network/publicIPAddresses', publicIpName)
           }
         }
       }
@@ -43,13 +43,13 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         properties: {
           backendIPConfigurations: [
             {
-              id: '${networkInterfaceIds[0]}/ipConfigurations/Dev-Control-Node-NICConfig'
+              id: '${networkInterfaceIds[0]}/ipConfigurations/ipconfig1'
             }
             {
-              id: '${networkInterfaceIds[1]}/ipConfigurations/Dev-Infrastructure-Node-A-NICConfig'
+              id: '${networkInterfaceIds[1]}/ipConfigurations/ipconfig1'
             }
             {
-              id: '${networkInterfaceIds[2]}/ipConfigurations/Dev-Infrastructure-Node-B-NICConfig'
+              id: '${networkInterfaceIds[2]}/ipConfigurations/ipconfig1'
             }
           ]
         }
@@ -60,9 +60,31 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
         name: healthProbeName
         properties: {
           protocol: 'Tcp'
-          port: 80
+          port: 5432
           intervalInSeconds: 5
           numberOfProbes: 2
+        }
+      }
+    ]
+    loadBalancingRules: [
+      {
+        name: 'Postgres'
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'FrontendConfiguration')
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, backendPoolName)
+          }
+          probe: {
+            id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName, healthProbeName)
+          }
+          protocol: 'Tcp'
+          frontendPort: 5432
+          backendPort: 5432
+          enableFloatingIP: false
+          idleTimeoutInMinutes: 4
+          loadDistribution: 'Default'
         }
       }
     ]
