@@ -27,9 +27,6 @@
     "securityType": {
       "value": "TrustedLaunch"
     },
-    "useExistingVMs": {
-      "value": false
-    },
     "publicIpName": {
       "value": "Dev-PublicIP"
     },

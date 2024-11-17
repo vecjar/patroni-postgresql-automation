@@ -23,9 +23,6 @@ param vmSize string
 ])
 param securityType string
 
-@description('Flag to use existing VMs or create new ones.')
-param useExistingVMs bool
-
 @description('Name for the public IP')
 param publicIpName string
 
@@ -38,18 +35,6 @@ param healthProbeName string
 @description('Name for the load balancer')
 param loadBalancerName string
 
-// Reference existing VMs if useExistingVMs is true
-resource existingVM1 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
-  name: vmNames[0]
-}
-
-resource existingVM2 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
-  name: vmNames[1]
-}
-
-resource existingVM3 'Microsoft.Compute/virtualMachines@2023-09-01' existing = if (useExistingVMs) {
-  name: vmNames[2]
-}
 
 // Module for Virtual Network
 module vnetModule './modules/virtualNetwork.bicep' = {
@@ -68,7 +53,7 @@ module nsgModule './modules/networkSecurityGroup.bicep' = {
 }
 
 // Conditionally create VMs if they do not exist
-module vmModule './modules/virtualMachines.bicep' = if (!useExistingVMs) {
+module vmModule './modules/virtualMachines.bicep' =  {
   name: 'vmDeployment'
   params: {
     vmNames: vmNames
