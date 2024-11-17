@@ -62,10 +62,24 @@ var securityProfileJson = {
   securityType: securityType
 }
 
-// Loop to create Network Interfaces and Public IP addresses
+// Loop to create Public IP addresses
+@batchSize(1)
+resource publicIPs 'Microsoft.Network/publicIPAddresses@2023-09-01' = [for (vmName, i) in vmNames: {
+  name: '${vmName}-publicIP'
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    idleTimeoutInMinutes: 4
+  }
+}]
+
+// Loop to create Network Interfaces and associate Public IP addresses
 @batchSize(1)
 resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [for (vmName, i) in vmNames: {
-  name: '${vmName}-nic' // Ensure the name matches here
+  name: '${vmName}-nic'
   location: location
   properties: {
     ipConfigurations: [
@@ -76,6 +90,9 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
             id: subnetId
           }
           privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIPs[i].id
+          }
         }
       }
     ]
@@ -107,7 +124,7 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) i
     networkProfile: {
       networkInterfaces: [
         {
-          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic') // Ensure ID matches
+          id: networkInterfaces[i].id
         }
       ]
     }
@@ -123,5 +140,9 @@ resource vms 'Microsoft.Compute/virtualMachines@2023-09-01' = [for (vmName, i) i
 
 // Output the network interface IDs after creation
 output networkInterfaceIds array = [
-  for vmName in vmNames: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-nic')
+  for (vmName, i) in vmNames: networkInterfaces[i].id
+]
+
+output publicIPIds array = [
+  for (vmName, i) in vmNames: publicIPs[i].id
 ]
