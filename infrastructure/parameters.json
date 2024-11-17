@@ -31,16 +31,16 @@
       "value": false
     },
     "publicIpName": {
-      "value": "myPublicIP"
+      "value": "Dev-PublicIP"
     },
     "backendPoolName": {
-      "value": "myBackendPool"
+      "value": "Dev-BackendPool"
     },
     "healthProbeName": {
-      "value": "myHealthProbe"
+      "value": "Dev-HealthProbe"
     },
     "loadBalancerName": {
-      "value": "myLoadBalancer"
+      "value": "Dev-LoadBalancer"
     }
   }
 }
