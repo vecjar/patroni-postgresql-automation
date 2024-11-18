@@ -29,6 +29,9 @@ param subnetId string
 @description('Network Security Group ID')
 param nsgId string
 
+@description('Backend Pool ID')
+param backendPoolId string
+
 // Image reference for Oracle Linux 9
 var imageReference = {
   publisher: 'Oracle'
@@ -93,6 +96,11 @@ resource networkInterfaces 'Microsoft.Network/networkInterfaces@2023-09-01' = [f
           publicIPAddress: {
             id: publicIPs[i].id
           }
+          loadBalancerBackendAddressPools: [
+            {
+              id: backendPoolId
+            }
+          ]
         }
       }
     ]
