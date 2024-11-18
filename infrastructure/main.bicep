@@ -52,6 +52,36 @@ module nsgModule './modules/networkSecurityGroup.bicep' = {
   }
 }
 
+// Ensure public IP is created before load balancer
+resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
+  name: publicIpName
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    idleTimeoutInMinutes: 4
+  }
+}
+
+// Module for Initial Load Balancer
+module initialNlbModule './modules/initialNetworkLoadBalancer.bicep' = {
+  name: 'initialNlbDeployment'
+  params: {
+    location: location
+    publicIpName: publicIpName
+    subnetId: vnetModule.outputs.subnetId
+    healthProbeName: healthProbeName
+    loadBalancerName: loadBalancerName
+  }
+  dependsOn: [
+    vnetModule
+    nsgModule
+    publicIp
+  ]
+}
+
 // Conditionally create VMs if they do not exist
 module vmModule './modules/virtualMachines.bicep' =  {
   name: 'vmDeployment'
@@ -66,29 +96,16 @@ module vmModule './modules/virtualMachines.bicep' =  {
     vnetId: vnetModule.outputs.vnetId
     subnetId: vnetModule.outputs.subnetId
     nsgId: nsgModule.outputs.nsgId
+    backendPoolId: initialNlbModule.outputs.backendPoolId
   }
   dependsOn: [
-    vnetModule
-    nsgModule
+    initialNlbModule
   ]
 }
 
-// Ensure public IP is created before load balancer
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
-  name: publicIpName
-  location: location
-  sku: {
-    name: 'Standard'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Static'
-    idleTimeoutInMinutes: 4
-  }
-}
-
-// Module for Network Load Balancer
-module nlbModule './modules/networkLoadBalancer.bicep' = {
-  name: 'nlbDeployment'
+// Module for Final Load Balancer Update
+module finalNlbModule './modules/finalNetworkLoadBalancer.bicep' = {
+  name: 'finalNlbDeployment'
   params: {
     location: location
     publicIpName: publicIpName
