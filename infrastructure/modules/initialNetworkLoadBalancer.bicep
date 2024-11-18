@@ -13,6 +13,9 @@ param healthProbeName string
 @description('Name for the load balancer')
 param loadBalancerName string
 
+@description('Name for the backend pool')
+param backendPoolName string
+
 // Load Balancer resource
 resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
   name: loadBalancerName
@@ -29,6 +32,11 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2023-09-01' = {
             id: resourceId('Microsoft.Network/publicIPAddresses', publicIpName)
           }
         }
+      }
+    ]
+    backendAddressPools: [
+      {
+        name: backendPoolName
       }
     ]
     probes: [

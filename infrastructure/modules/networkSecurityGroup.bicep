@@ -2,7 +2,7 @@
 param location string
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
-  name: 'myNSG'
+  name: 'Dev-NSG'
   location: location
   properties: {
     securityRules: [
