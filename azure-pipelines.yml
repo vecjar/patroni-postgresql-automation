@@ -35,7 +35,24 @@ jobs:
           az bicep install
         displayName: 'Install Bicep CLI'
 
-      # Step 2: Deploy Bicep file
+      # Step 2: Verify File Paths
+      - script: |
+          echo "Verifying file paths..."
+          if (Test-Path "$(Build.SourcesDirectory)/infrastructure/main.bicep") {
+            echo "main.bicep found."
+          } else {
+            echo "main.bicep not found."
+            exit 1
+          }
+          if (Test-Path "$(Build.SourcesDirectory)/infrastructure/parameters.json") {
+            echo "parameters.json found."
+          } else {
+            echo "parameters.json not found."
+            exit 1
+          }
+        displayName: 'Verify File Paths'
+
+      # Step 3: Deploy Bicep file
       - task: AzureCLI@2
         inputs:
           azureSubscription: $(azureSubscription)
@@ -43,10 +60,10 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Deploying Bicep file..."
-            az deployment group create --resource-group $(rgname) --template-file $(Build.SourcesDirectory)/main.bicep --parameters @$(Build.SourcesDirectory)/parameters.json
+            az deployment group create --resource-group $(rgname) --template-file $(Build.SourcesDirectory)/infrastructure/main.bicep --parameters @$(Build.SourcesDirectory)/infrastructure/parameters.json
         displayName: 'Deploy Bicep File'
 
-      # Step 3: Azure Logout
+      # Step 4: Azure Logout
       - task: AzureCLI@2
         displayName: 'Azure Logout'
         inputs:
