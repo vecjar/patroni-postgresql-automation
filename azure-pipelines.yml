@@ -22,7 +22,7 @@ jobs:
     steps:
       - checkout: self
 
-      # Step 1: Debug - Verify Files
+      # Step 1: Verify Files
       - script: |
           echo "Listing contents of source directory:"
           ls -la $(Build.SourcesDirectory)
