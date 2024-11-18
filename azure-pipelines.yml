@@ -43,10 +43,7 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Deploying Bicep file..."
-            az deployment group create `
-              --resource-group $(rgname) `
-              --template-file $(Build.SourcesDirectory)/main.bicep `
-              --parameters @$(Build.SourcesDirectory)/parameters.json
+            az deployment group create --resource-group $(rgname) --template-file $(Build.SourcesDirectory)/main.bicep --parameters @$(Build.SourcesDirectory)/parameters.json
         displayName: 'Deploy Bicep File'
 
       # Step 3: Azure Logout
