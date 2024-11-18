@@ -22,7 +22,13 @@ jobs:
     steps:
       - checkout: self
 
-      # Step 1: Install Bicep CLI
+      # Step 1: Debug - Verify Files
+      - script: |
+          echo "Listing contents of source directory:"
+          ls -la $(Build.SourcesDirectory)
+        displayName: 'Debug: Verify Files in Source Directory'
+
+      # Step 2: Install Bicep CLI
       - task: UseDotNet@2
         displayName: 'Install Bicep CLI'
         inputs:
@@ -35,7 +41,7 @@ jobs:
           az bicep install
         displayName: 'Install Bicep CLI'
 
-      # Step 2: Deploy Bicep file
+      # Step 3: Deploy Bicep file
       - task: AzureCLI@2
         inputs:
           azureSubscription: $(azureSubscription)
@@ -43,13 +49,13 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Deploying Bicep file..."
-            az deployment group create \
-              --resource-group $(rgname) \
-              --template-file $(Build.SourcesDirectory)/main.bicep \
-              --parameters @$(Build.SourcesDirectory)/parameters.json
+            az deployment group create `
+              --resource-group azure-patroni-integration-rg `
+              --template-file "$(Build.SourcesDirectory)/main.bicep" `
+              --parameters "$(Build.SourcesDirectory)/parameters.json"
         displayName: 'Deploy Bicep File'
 
-      # Step 3: Azure Logout
+      # Step 4: Azure Logout
       - task: AzureCLI@2
         displayName: 'Azure Logout'
         inputs:
