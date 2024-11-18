@@ -14,7 +14,7 @@ pool:
 variables:
   rgname: 'azure-patroni-integration-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
-  azureSubscription: 'AzureResumeConnection'  # Replace with your subscription ID
+  azureSubscription: 'AzureResumeConnection'  # Replace with your service connection name
 
 jobs:
   - job: DeployInfrastructure
@@ -35,7 +35,24 @@ jobs:
           az bicep install
         displayName: 'Install Bicep CLI'
 
-      # Step 2: Deploy Bicep file
+      # Step 2: Verify File Paths
+      - script: |
+          echo "Verifying file paths..."
+          if exist "$(Build.SourcesDirectory)\infrastructure\main.bicep" (
+            echo "main.bicep found."
+          ) else (
+            echo "main.bicep not found."
+            exit /b 1
+          )
+          if exist "$(Build.SourcesDirectory)\infrastructure\parameters.json" (
+            echo "parameters.json found."
+          ) else (
+            echo "parameters.json not found."
+            exit /b 1
+          )
+        displayName: 'Verify File Paths'
+
+      # Step 3: Deploy Bicep file
       - task: AzureCLI@2
         inputs:
           azureSubscription: $(azureSubscription)
@@ -43,13 +60,10 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Deploying Bicep file..."
-            az deployment group create \
-              --resource-group $(rgname) \
-              --template-file $(Build.SourcesDirectory)/main.bicep \
-              --parameters @$(Build.SourcesDirectory)/parameters.json
+            az deployment group create --resource-group $(rgname) --template-file $(Build.SourcesDirectory)/infrastructure/main.bicep --parameters @$(Build.SourcesDirectory)/infrastructure/parameters.json
         displayName: 'Deploy Bicep File'
 
-      # Step 3: Azure Logout
+      # Step 4: Azure Logout
       - task: AzureCLI@2
         displayName: 'Azure Logout'
         inputs:
