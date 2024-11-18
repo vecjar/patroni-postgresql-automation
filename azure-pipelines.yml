@@ -14,10 +14,7 @@ pool:
 variables:
   rgname: 'azure-patroni-integration-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
-  azureSubscription: 'AzureResumeConnection'  # Replace with your subscription ID
-  servicePrincipalId: 'your-service-principal-id'  # Replace with your service principal ID
-  servicePrincipalKey: 'your-service-principal-key'  # Replace with your service principal key
-  tenantId: 'your-tenant-id'  # Replace with your tenant ID
+  azureSubscription: 'AzureResumeConnection'  # Replace with your service connection name
 
 jobs:
   - job: DeployInfrastructure
@@ -38,22 +35,7 @@ jobs:
           az bicep install
         displayName: 'Install Bicep CLI'
 
-      # Step 2: Azure Login
-      - task: AzureCLI@2
-        displayName: 'Azure Login'
-        inputs:
-          azureSubscription: $(azureSubscription)
-          scriptType: powershell
-          scriptLocation: inlineScript
-          inlineScript: |
-            echo "Logging in to Azure..."
-            az login --service-principal -u $env:servicePrincipalId -p $env:servicePrincipalKey --tenant $env:tenantId
-        env:
-          servicePrincipalId: $(servicePrincipalId)
-          servicePrincipalKey: $(servicePrincipalKey)
-          tenantId: $(tenantId)
-
-      # Step 3: Deploy Bicep file
+      # Step 2: Deploy Bicep file
       - task: AzureCLI@2
         inputs:
           azureSubscription: $(azureSubscription)
@@ -67,7 +49,7 @@ jobs:
               --parameters @$(Build.SourcesDirectory)/parameters.json
         displayName: 'Deploy Bicep File'
 
-      # Step 4: Azure Logout
+      # Step 3: Azure Logout
       - task: AzureCLI@2
         displayName: 'Azure Logout'
         inputs:
