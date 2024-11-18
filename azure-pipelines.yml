@@ -14,7 +14,7 @@ pool:
 variables:
   rgname: 'azure-patroni-integration-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
-  azureSubscription: 'c7b3597b-5533-4cff-a5a1-b2a326277e67'  # Replace with your subscription ID
+  azureSubscription: 'AzureResumeConnection'  # Replace with your subscription ID
 
 jobs:
   - job: DeployInfrastructure
