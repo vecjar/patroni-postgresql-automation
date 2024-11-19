@@ -74,6 +74,7 @@ module initialNlbModule './modules/initialNetworkLoadBalancer.bicep' = {
     subnetId: vnetModule.outputs.subnetId
     healthProbeName: healthProbeName
     loadBalancerName: loadBalancerName
+    backendPoolName: backendPoolName
   }
   dependsOn: [
     vnetModule
