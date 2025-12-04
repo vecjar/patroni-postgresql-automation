@@ -9,11 +9,11 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
       {
         name: 'AllowAllInbound'
         properties: {
-          description: 'Allow all inbound traffic'
-          protocol: '*'
-          sourcePortRange: '*'
-          destinationPortRange: '*'
-          sourceAddressPrefix: '*'
+          description: 'Allow limited inbound traffic from secure IPs'
+          protocol: 'Tcp'
+          sourcePortRange: '1024-65535'
+          destinationPortRange: '22'
+          sourceAddressPrefix: '203.0.113.5/32'
           destinationAddressPrefix: '*'
           access: 'Allow'
           priority: 100
@@ -23,12 +23,12 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
       {
         name: 'AllowAllOutbound'
         properties: {
-          description: 'Allow all outbound traffic'
-          protocol: '*'
+          description: 'Allow outbound HTTP/HTTPS traffic'
+          protocol: 'Tcp'
           sourcePortRange: '*'
-          destinationPortRange: '*'
+          destinationPortRange: '80-443'
           sourceAddressPrefix: '*'
-          destinationAddressPrefix: '*'
+          destinationAddressPrefix: '198.51.100.0/24'
           access: 'Allow'
           priority: 100
           direction: 'Outbound'
